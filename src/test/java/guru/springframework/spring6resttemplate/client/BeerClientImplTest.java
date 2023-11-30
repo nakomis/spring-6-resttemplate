@@ -15,6 +15,15 @@ class BeerClientImplTest {
     BeerClientImpl beerClient;
 
     @Test
+    void getBeerById() {
+        Page<BeerDTO> beerDTOS = beerClient.listBeers();
+        BeerDTO dto = beerDTOS.getContent().get(0);
+        BeerDTO byId = beerClient.getBeerById(dto.getId());
+
+        assertNotNull(byId);
+    }
+
+    @Test
     void listBeersNoName() {
         Page<BeerDTO> result = beerClient.listBeers();
         System.out.println(result.getTotalElements());
