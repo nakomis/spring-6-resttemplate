@@ -1,7 +1,5 @@
 package guru.springframework.spring6resttemplate.client;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.springframework.spring6resttemplate.model.BeerDTO;
 import guru.springframework.spring6resttemplate.model.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.model.BeerStyle;
@@ -14,7 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
+import java.net.URI;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -73,8 +71,14 @@ public class BeerClientImpl implements BeerClient {
     public BeerDTO createBeer(BeerDTO beerDto) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        ResponseEntity<BeerDTO> response = restTemplate.postForEntity(GET_BEER_PATH, beerDto, BeerDTO.class);
+        URI uri = restTemplate.postForLocation(GET_BEER_PATH, beerDto);
+        return restTemplate.getForObject(uri.getPath(), BeerDTO.class);
+    }
 
-        return null;
+    @Override
+    public BeerDTO updateBeer(BeerDTO beerDto) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        restTemplate.put(GET_BEER_BY_ID_PATH, beerDto, beerDto.getId());
+        return getBeerById(beerDto.getId());
     }
 }
