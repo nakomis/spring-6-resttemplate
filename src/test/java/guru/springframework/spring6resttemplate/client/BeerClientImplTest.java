@@ -1,8 +1,10 @@
 package guru.springframework.spring6resttemplate.client;
 
+import guru.springframework.spring6resttemplate.model.BeerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +15,14 @@ class BeerClientImplTest {
     BeerClientImpl beerClient;
 
     @Test
+    void listBeersNoName() {
+        Page<BeerDTO> result = beerClient.listBeers();
+        System.out.println(result.getTotalElements());
+    }
+
+    @Test
     void listBeers() {
-        beerClient.listBeers();
+        Page<BeerDTO> result = beerClient.listBeers("foo", null, null, null, null);
+        System.out.println(result.getTotalElements());
     }
 }
