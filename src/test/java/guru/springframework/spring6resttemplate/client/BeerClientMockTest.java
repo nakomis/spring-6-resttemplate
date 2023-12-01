@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.web.client.MockServerRestTemplateCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -26,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,8 +51,16 @@ public class BeerClientMockTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Value("${com.nakomis.rest.template.username}")
+    private String username;
+
+    @Value("${com.nakomis.rest.template.password}")
+    private String password;
+
     @Mock
     RestTemplateBuilder mockRestTemplateBuilder = new RestTemplateBuilder(new MockServerRestTemplateCustomizer());
+
+    String expectedAuthenticationHeader;
 
     BeerDTO dto;
     String dtoJson;
@@ -63,6 +73,7 @@ public class BeerClientMockTest {
         beerClient = new BeerClientImpl(mockRestTemplateBuilder);
         dto = getBeerDto();
         dtoJson = objectMapper.writeValueAsString(dto);
+        expectedAuthenticationHeader = "Basic " + Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
     }
 
     @Test
@@ -75,6 +86,7 @@ public class BeerClientMockTest {
 
         server.expect(method(HttpMethod.GET))
                 .andExpect(requestTo(uri))
+                .andExpect(header("Authorization", expectedAuthenticationHeader))
                 .andExpect(queryParam("beerName", "ALE"))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
@@ -122,11 +134,11 @@ public class BeerClientMockTest {
     @Test
     void testCreateBeer() {
         URI uri = UriComponentsBuilder.fromPath(BeerClientImpl.GET_BEER_BY_ID_PATH)
-                        .build(dto.getId());
+                .build(dto.getId());
 
         server.expect(method(HttpMethod.POST))
                 .andExpect(requestTo(URL + BeerClientImpl.GET_BEER_PATH))
-                        .andRespond(withAccepted().location(uri));
+                .andRespond(withAccepted().location(uri));
 
         mockGetOperation();
 
