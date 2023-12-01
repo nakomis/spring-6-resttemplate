@@ -1,0 +1,19 @@
+spring.security.oauth2:
+  client:
+    registration:
+      springauth:
+        client-id: oidc-client
+        client-secret: secret
+        scope[0]: message.read
+        scope[1]: message.write
+        authorization-grant-type: client_credentials
+        provider: springauth
+    provider:
+      springauth:
+        authorization-uri: http://localhost:9000/auth2/authorize
+        token-uri: http://localhost:9000/oauth2/token
+  resourceserver:
+    jwt:
+      issuer-uri: http://localhost:9000
+rest.template.rootUrl: http://localhost:8080
+

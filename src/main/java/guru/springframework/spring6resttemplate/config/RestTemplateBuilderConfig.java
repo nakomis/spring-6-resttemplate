@@ -15,18 +15,11 @@ public class RestTemplateBuilderConfig {
     @Value("${rest.template.rootUrl}")
     private String rootUrl;
 
-    @Value("${com.nakomis.rest.template.username}")
-    private String username;
-
-    @Value("${com.nakomis.rest.template.password}")
-    private String password;
-
     @Bean
     RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer) {
         assert rootUrl != null;
         return configurer
                 .configure(new RestTemplateBuilder())
-                .basicAuthentication(username, "hunter2")
                 .uriTemplateHandler(new DefaultUriBuilderFactory(rootUrl));
 
     }
