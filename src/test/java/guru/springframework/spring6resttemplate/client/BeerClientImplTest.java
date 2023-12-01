@@ -30,7 +30,7 @@ class BeerClientImplTest {
 
         BeerDTO beerDto = beerClient.createBeer(newDto);
 
-        beerClient.deleteBeer(beerDto);
+        beerClient.deleteBeer(beerDto.getId());
 
         assertThrows(HttpClientErrorException.class, () -> {
             beerClient.getBeerById(beerDto.getId());
