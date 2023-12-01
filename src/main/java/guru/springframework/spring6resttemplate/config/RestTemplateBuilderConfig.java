@@ -24,13 +24,10 @@ public class RestTemplateBuilderConfig {
     @Bean
     RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer) {
         assert rootUrl != null;
-
-        RestTemplateBuilder builder = configurer
+        return configurer
                 .configure(new RestTemplateBuilder())
-                .basicAuthentication(username, "hunter2");
-        
-        DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(rootUrl);
+                .basicAuthentication(username, "hunter2")
+                .uriTemplateHandler(new DefaultUriBuilderFactory(rootUrl));
 
-        return builder.uriTemplateHandler(uriBuilderFactory);
     }
 }
